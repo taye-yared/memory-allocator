@@ -1,7 +1,3 @@
-/**
- * Machine Problem 4
- * CS 241 - Spring 2016
- */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,8 +9,6 @@
 struct meta_data {
   // size of the memory allocated by malloc
   size_t size; 		// size of block allocated for USER
-  //size_t prev_size; // size of previous meta_data in linked list
-  //int free;
   struct meta_data *next;
 } ;
 
@@ -90,7 +84,7 @@ void *malloc(size_t size) {
 		return NULL;
 	ret_val->size = size;
 	ret_val->next = NULL;
-	//insert_meta_data(ret_val); 	// insert meta_data into used linked list
+	insert_meta_data(ret_val); 	// insert meta_data into used linked list
 	return (void*)ret_val + sizeof(struct meta_data);
   }
   remove_meta_data(ret_val);
@@ -138,7 +132,7 @@ void break_up(struct meta_data *curr, size_t tot_size, size_t data_size){
 	new_node->size = tot_size - data_size - sizeof(struct meta_data);
 	new_node->next = NULL;
 	insert_meta_data(new_node);
-	//connect(new_node);
+	connect(new_node);
 }
 
 // insert at beginning of linked list
@@ -301,9 +295,9 @@ void *realloc(void *ptr, size_t size) {
   struct meta_data * curr = ptr - sizeof(struct meta_data);
 
   if(curr->size >= size){ 	// If current block has enough memory already (break up if too much memory)
-	//size_t diff = curr->size - size;
-	//if(diff > sizeof(struct meta_data))
-		//break_up(curr, curr->size, size);
+	size_t diff = curr->size - size;
+	if(diff > sizeof(struct meta_data))
+		break_up(curr, curr->size, size);
 	return ptr;
   }	
   
